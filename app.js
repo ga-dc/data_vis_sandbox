@@ -1,46 +1,47 @@
+$(document).ready(function() {
+  buildStateSelect();
+  $('.states').on("change", function() {
+    graphState($(this).val());
+  });
+});
+
 function graph(data) {
   var newData = [];
+  console.log(data);
   for(var i = 2005; i <= 2013; i++) {
     newData.push([data[i][3], data[i][1]]);
   }
   console.log(newData);
   g = new Dygraph($(".graph")[0], newData,
-  {
-    labels: [ "Year", "Employment" ]
-  })
-
-
+    {
+      labels: [ "Year", "Employment" ]
+    });
 }
 
 function graphState(id) {
-  var counter = 0;
-  var data = {};
+  var reqs = [];
 
   for(var i = 2005; i <= 2013; i++) {
-    $.getJSON("http://api.census.gov/data/timeseries/asm/state?get=NAICS_TTL,EMP,GEO_TTL&for=state:" + id + "&time=" + i + "&NAICS=31-33")
-    .then(function(results) {
-      var result = results[1];
-      var year = parseInt(result[3]);
-
-      data[year] = result;
-      counter++;
-
-      if (counter === 9) {
-        $("h1").text(result[2])
-        console.log(data);
-        graph(data);
-      }
-    });
-
+    request = $.getJSON("http://api.census.gov/data/timeseries/asm/state?get=NAICS_TTL,EMP,GEO_TTL&for=state:" + id + "&time=" + i + "&NAICS=31-33");
+    reqs.push(request);
   }
+
+  $.when.apply(undefined, reqs).then(function(data) {
+    graph(collectResults(arguments));
+  });
 }
 
-$(document).ready(function() {
-  buildStateSelect();
-  $('.states').on("change", function() {
-    graphState($(this).val());
-  })
-});
+function collectResults(results) {
+
+  var collectedResults = {};
+  for(var i = 0; i < results.length; i++) {
+    var currentResult = results[i][0][1]; // ignore header
+    var year = parseInt(currentResult[3]);
+    collectedResults[year] = currentResult;
+  }
+
+  return collectedResults;
+}
 
 function buildStateSelect() {
   var states = fipsCodes();
