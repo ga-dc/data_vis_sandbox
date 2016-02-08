@@ -1,22 +1,9 @@
-function graph(data) {
-  var newData = [];
-  for(var i = 2005; i <= 2013; i++) {
-    newData.push([data[i][3], data[i][1]]);
-  }
-  g = new Dygraph($(".state.graph")[0], newData,
-  {
-    labels: [ "Year", "Employment" ]
-  });
-
-
-}
-
 function graphState(id) {
   var counter = 0;
   var data = {};
 
   for(var i = 2005; i <= 2013; i++) {
-    $.getJSON("http://api.census.gov/data/timeseries/asm/state?get=NAICS_TTL,EMP,GEO_TTL&for=state:" + id + "&time=" + i + "&NAICS=31-33")
+    $.getJSON("http://api.census.gov/data/timeseries/asm/state?get=NAICS_TTL,EMP,GEO_TTL&for=state:" + id + "&time=" + i + "&NAICS=31-33" + "&key=81cdc733d3ac0f3496a88eebbed0a31478c403c6")
     .then(function(results) {
       var result = results[1];
       var year = parseInt(result[3]);
@@ -26,7 +13,7 @@ function graphState(id) {
 
       if (counter === 9) {
         $("h1").text(result[2]);
-        graph(data);
+        graph(data, $(".state.graph")[0]);
       }
     });
 
