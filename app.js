@@ -44,11 +44,10 @@ $(document).ready(function() {
 
 function buildStateSelect() {
   var states = fipsCodes();
-  for (var id in states) {
-  if (states.hasOwnProperty(id)) {
+  sortedStatesArray = sortedKeyArray(states)
+  sortedStatesArray.forEach(function(id){
     $(".states").append($("<option value='" + id + "'>" + states[id] + "</option>"))
-  }
-}
+  })
 }
 
 function fipsCodes() {
@@ -105,4 +104,9 @@ function fipsCodes() {
     "55": "Wisconsin",
     "56": "Wyoming"
   };
+}
+
+function sortedKeyArray(obj){
+  keys = Object.keys(obj)
+  return(keys.sort())
 }
