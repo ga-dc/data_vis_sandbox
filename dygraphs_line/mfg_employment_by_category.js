@@ -22,7 +22,7 @@ function graphNAICSCode(naicsCode) {
 }
 
 function buildNaicsSelect() {
-  $.getJSON("naics.json", function(naics) {
+  $.getJSON("../naics.json", function(naics) {
     naics.forEach(function(naicsCode){
       $(".naics").append($("<option value='" + naicsCode.code + "'>" + naicsCode.description + "</option>"));
     });
